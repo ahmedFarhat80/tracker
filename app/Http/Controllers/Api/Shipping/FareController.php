@@ -18,6 +18,7 @@ class FareController extends Controller
      */
     public function store(FareRequest $request){
         try{
+            dd(\Auth::guard('user-api')->id());
             $fare = Fare::firstOrCreate([
                 'user_id'     => \Auth::guard('user-api')->id(),
                 'base_fare'   => $request->base_fare,
@@ -46,7 +47,7 @@ class FareController extends Controller
             $data            = Fare::where(['id' => $id , 'user_id' => $user_id])->first();
             $data->base_fare = $request->base_fare;
             $data->save();
-            
+
             return response()->json([
                 'status'   => "success",
                 'data'     => $data,
