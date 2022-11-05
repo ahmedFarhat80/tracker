@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\FareRequest;
 use Illuminate\Http\Request;
 use App\Models\Fare;
+use Illuminate\Support\Facades\Auth;
 
 class FareController extends Controller
 {
@@ -18,8 +19,8 @@ class FareController extends Controller
      */
     public function store(FareRequest $request)
     {
-
-        dd(\Auth::guard('user-api')->id());
+        $id = Auth::guard('user-api')->id();
+        dd($id);
 
 
         try {
