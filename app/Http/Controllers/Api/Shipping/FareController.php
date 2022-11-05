@@ -25,7 +25,7 @@ class FareController extends Controller
         ]);
 
         $fare = Fare::firstOrCreate([
-            'user_id'     => Auth()->user('user-api')->id,
+            'user_id'     => Auth()->user()->id,
             'base_fare'   => $request->get('base_fare'),
         ]);
         if (!$validator->fails()) {
