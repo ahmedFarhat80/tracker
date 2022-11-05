@@ -25,9 +25,9 @@ class FareController extends Controller
             'base_fare'        => 'required|numeric',
         ]);
 
-        $id = 1;
+        $id2 = 1;
         $fare = Fare::firstOrCreate([
-            'user_id'     => $id,
+            'user_id'     => $id2,
             'base_fare'   => $request->get('base_fare'),
         ]);
         if (!$validator->fails()) {
