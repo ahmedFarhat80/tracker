@@ -19,22 +19,24 @@ class FareController extends Controller
      */
     public function store(FareRequest $request)
     {
-        $id = Auth::guard('user-api')->id();
-        dd($id);
+        $validator = Validator($request->all(), [
+            // 'user_id'        => 'required|numeric',
+            'base_fare'        => 'required|numeric',
+        ]);
 
-
-        try {
-            $fare = Fare::firstOrCreate([
-                'user_id'     => \Auth::guard('user-api')->id(),
-                'base_fare'   => $request->base_fare,
-            ]);
+        $fare = Fare::firstOrCreate([
+            'user_id'     => \Auth::guard('user-api')->id(),
+            'base_fare'   => $request->get('base_fare'),
+        ]);
+        if (!$validator->fails()) {
 
             return response()->json([
                 'status'   => "success",
                 'data'     => $fare,
             ]);
-        } catch (\Exception $ex) {
-            return errorMessage($ex->getMessage(), 500);
+        } else {
+            // return errorMessage($ex->getMessage(), 500);
+            return response()->json(['message' => $validator->getMessageBag()->first(), 'Request' => Response::HTTP_BAD_REQUEST]);
         }
     }
 
