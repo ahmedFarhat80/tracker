@@ -7,6 +7,7 @@ use App\Http\Requests\Shipping\FareRequest;
 use Illuminate\Http\Request;
 use App\Models\Fare;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class FareController extends Controller
 {
