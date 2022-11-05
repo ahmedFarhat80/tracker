@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Shipping\FareController;
 use App\Http\Controllers\Api\Shipping\NewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -128,7 +129,7 @@ Route::group(['middleware' => ['auth:user-api', 'Localization'], 'namespace' => 
         |--------------------------------------------------------------------------
         */
         Route::group(['prefix' => 'fares'], function () {
-            Route::post('store', 'Shipping\FareController@store');
+            Route::post('store', [FareController::class, 'store']);
             Route::post('update/{id}', 'Shipping\FareController@update');
         });
 
@@ -144,6 +145,4 @@ Route::group(['middleware' => ['auth:user-api', 'Localization'], 'namespace' => 
             Route::get('callback_error', 'Shipping\ForeignTransactionController@callbackError');
         });
     });
-
-
 }); // END AUTHENTICATION AS USER
