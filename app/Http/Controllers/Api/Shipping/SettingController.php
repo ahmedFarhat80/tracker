@@ -18,7 +18,7 @@ class SettingController extends Controller
     public function index(){
         $user_id  = \Auth::guard('user-api')->id();
         $data = Setting::where('user_id' , $user_id)->paginate(PAGINATION_COUNT);
-        return SettingResource::collection($data);        
+        return SettingResource::collection($data);
     }
 
     /**
@@ -58,7 +58,7 @@ class SettingController extends Controller
             // check relation between user & restaurant
             if(!$user->hasSetting($id))
                 return errorMessage("This setting not have relation with logged shipping!", 500);
-                
+
             $data = Setting::findOrFail($id);
             return new SettingResource($data);
         }catch(\Exception $ex){
@@ -90,7 +90,7 @@ class SettingController extends Controller
             // check relation between user & restaurant
             if(!$user->hasSetting($id))
                 return errorMessage("This setting not have relation with logged shipping!", 500);
-            
+
 
             $data = Setting::findOrFail($id);
             $setting = $this->process($data , $request);
@@ -114,14 +114,14 @@ class SettingController extends Controller
                 return errorMessage("This setting not have relation with logged shipping!", 500);
 
             $data = Setting::findOrFail($id);
-            
+
             $data->delete();
-            
+
             $data = [
                 'status'    => 'success',
                 'message'   => __('dashboard.delete_success'),
             ];
-            
+
             return response($data, 200);
         }catch(\Exception $ex){
             return errorMessage($ex->getMessage(), 500);

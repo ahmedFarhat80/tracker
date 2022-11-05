@@ -36,13 +36,13 @@ class InfoController extends Controller
                                         ->where('status', 'pending');
                             }])
                             ->withCount(['orders AS total_fare' => function ($q) {
-                                    $q->select(\DB::raw("SUM(fare) as total_fare"));                                        
+                                    $q->select(\DB::raw("SUM(fare) as total_fare"));
                             }])
                             ->withCount(['orders AS total_price_with_fare' => function ($q) {
-                                    $q->select(\DB::raw("SUM(totalWithFare) as total_price_with_fare"));                                        
+                                    $q->select(\DB::raw("SUM(totalWithFare) as total_price_with_fare"));
                             }])
                             ->findorFail($id);
-        
+
 
         return response()->json($data);
     }
