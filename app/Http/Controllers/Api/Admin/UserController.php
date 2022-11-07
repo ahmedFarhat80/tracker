@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index(){
         $data = User::selection()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
-        return UserResource::collection($data);  
+        return UserResource::collection($data);
     }
 
     /**
@@ -45,11 +45,11 @@ class UserController extends Controller
     {
         try{
             $user = $this->process(new User , $request);
-            
+
             $user->password            = $request->password;
             $user->status              = $request->status ? 1 : 0;
             $user->save();
-            
+
             $fare = Fare::firstOrCreate([
                 'user_id'     => $user->id,
                 'base_fare'   => 1,
@@ -102,11 +102,11 @@ class UserController extends Controller
                 $this->validate($request,[
                     'user_id'   => 'required',
                 ]);
-                
+
                 $id       = $request->user_id;
             }elseif(\Auth::guard('user-api')->check()){
 
-                /* Check user request id is the same loged in id */  
+                /* Check user request id is the same loged in id */
                 if (Gate::denies('user-update-profile', $request))
                     return errorMessage('Forbidden Error: ID does not match loged-in user id!', 403);
 
@@ -131,14 +131,14 @@ class UserController extends Controller
     {
         try{
             $data = User::findOrFail($id);
-            
+
             $data->delete();
-            
+
             $data = [
                 'status'    => 'success',
                 'message'   => __('admin.delete_success'),
             ];
-            
+
             return response($data, 200);
         }catch(\Exception $ex){
             return errorMessage($ex->getMessage(), 500);
@@ -152,19 +152,19 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroyAvatar(){
-        
+
         try{
             $id             = \Auth::guard('user-api')->id();
             $data           = User::selection()->findorFail($id);
-            
+
             /* Unlink old image from helper function call */
             !empty($data->photo) ? UnlinkImage($data->photo) : '';
             $data->photo    = null;
 
             $data->save();
-            
+
             return new UserResource($data , 200);
-            
+
         }catch(\Exception $ex){
             return errorMessage($ex->getMessage(), 500);
         }
@@ -202,7 +202,7 @@ class UserController extends Controller
         $user->swift_code          = $request->swift_code;
         $user->iban                = $request->iban;
         $user->SubMerchUID         = $request->SubMerchUID;
-        
+
 
         $user->save();
 
@@ -222,15 +222,15 @@ class UserController extends Controller
             /**
              * WILL DISCUSS
              * MUST BE CHECKED FIRST
-             * IS USER HAS BEEN SELECTED QUOTE OR NOT BEFORE CHANGE STATUS INTO ACTIVE 
-             * **/ 
+             * IS USER HAS BEEN SELECTED QUOTE OR NOT BEFORE CHANGE STATUS INTO ACTIVE
+             * **/
             $data = User::selection()->findOrFail($id);
-            
+
             $status =  $data->status  == 0 ? 1 : 0;
 
             $data->update(['status' => $status ]);
 
-            return new UserResource($data);            
+            return new UserResource($data);
 
         } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
@@ -246,12 +246,12 @@ class UserController extends Controller
     */
 
     public function changePassword(ChangePasswordRequest $request){
-        
+
         try{
             $id     = \Auth::guard('user-api')->id();
             $data   = User::findorFail($id);
-            
-            if (\Hash::check($request->old_password, $data->password)) { 
+
+            if (\Hash::check($request->old_password, $data->password)) {
                 $data->fill([
                     'password' => $request->new_password
                 ])->save();
@@ -274,15 +274,15 @@ class UserController extends Controller
     */
 
     public function changeBankInfo(BankInfoRequest $request){
-        
+
         try{
             $id     = \Auth::guard('user-api')->id();
             $data   = User::selection()->findorFail($id);
-            
+
             $data->account_name = $request->account_name;
             $data->swift_code   = $request->swift_code;
             $data->iban         = $request->iban;
-            $data->SubMerchUID  = $request->SubMerchUID;
+            // $data->SubMerchUID  = $request->SubMerchUID;
 
             $data->save();
 
@@ -310,13 +310,13 @@ class UserController extends Controller
 
                 /* Unlink old image from helper function call */
                 !empty($data->photo) ? UnlinkImage($data->photo) : '';
-                            
+
                 $filePath       = uploadImage('user', $request->photo);
                 User::where('id' , $id)->update([
                     'photo'       => $filePath,
                 ]);
             }
-            
+
             return new UserResource($data);
 
         }catch(\Exception $ex){
