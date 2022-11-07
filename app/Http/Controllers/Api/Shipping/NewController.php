@@ -33,21 +33,20 @@ class NewController extends Controller
 
     public function get_driver_data($id)
     {
-
         $data  = Driver::where('id', '=', $id)->with('orders')->first();
+        // $restaurant      =
 
         $Order_sum_price = Order::where('driver_id', '=', $id)->whereDate('created_at', Carbon::today())->where('paid_status', '=', "cash")->sum('price');
         $distance        = Order::where('driver_id', '=', $id)->whereDate('created_at', Carbon::today())->sum('distance');
 
-
-        // $Orders = Order::where('driver_id', '=', $id)->get();
+        $Orders = Order::where('driver_id', '=', $id)->with('restaurant')->get();
 
 
         return response()->json([
             'data'  => $data,
             'Order_sum_price'  => $Order_sum_price,
             "distance" => $distance,
-            // "Orders" => $Orders
+            "Orders" => $Orders
         ]);
     }
 }
