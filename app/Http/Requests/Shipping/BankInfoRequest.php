@@ -27,7 +27,7 @@ class BankInfoRequest extends FormRequest
             'account_name'  => 'required',
             'swift_code'    => 'required',
             'iban'          => 'required',
-            'SubMerchUID'   => 'required',
+            // 'SubMerchUID'   => 'required',
         ];
     }
 }

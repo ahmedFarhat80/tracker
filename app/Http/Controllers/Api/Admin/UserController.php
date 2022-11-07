@@ -20,7 +20,8 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index()
+    {
         $data = User::selection()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
         return UserResource::collection($data);
     }
@@ -43,8 +44,8 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        try{
-            $user = $this->process(new User , $request);
+        try {
+            $user = $this->process(new User, $request);
 
             $user->password            = $request->password;
             $user->status              = $request->status ? 1 : 0;
@@ -56,7 +57,7 @@ class UserController extends Controller
             ]);
 
             return $this->show($user->id);
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -69,10 +70,10 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $data = User::selection()->findOrFail($id);
             return new UserResource($data);
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -95,16 +96,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserRequest $request){
-        try{
+    public function update(UserRequest $request)
+    {
+        try {
 
-            if(\Auth::guard('admin-api')->check()){
-                $this->validate($request,[
+            if (\Auth::guard('admin-api')->check()) {
+                $this->validate($request, [
                     'user_id'   => 'required',
                 ]);
 
                 $id       = $request->user_id;
-            }elseif(\Auth::guard('user-api')->check()){
+            } elseif (\Auth::guard('user-api')->check()) {
 
                 /* Check user request id is the same loged in id */
                 if (Gate::denies('user-update-profile', $request))
@@ -114,10 +116,9 @@ class UserController extends Controller
             }
 
             $data     = User::findorFail($id);
-            $user     = $this->process($data , $request);
+            $user     = $this->process($data, $request);
             return $this->show($user->id);
-
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -129,7 +130,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $data = User::findOrFail($id);
 
             $data->delete();
@@ -140,7 +141,7 @@ class UserController extends Controller
             ];
 
             return response($data, 200);
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -151,9 +152,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroyAvatar(){
+    public function destroyAvatar()
+    {
 
-        try{
+        try {
             $id             = \Auth::guard('user-api')->id();
             $data           = User::selection()->findorFail($id);
 
@@ -163,9 +165,8 @@ class UserController extends Controller
 
             $data->save();
 
-            return new UserResource($data , 200);
-
-        }catch(\Exception $ex){
+            return new UserResource($data, 200);
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -176,13 +177,14 @@ class UserController extends Controller
      * @param  User Object , Request
      * @return User
      */
-    protected function process(User $user , Request $request){
+    protected function process(User $user, Request $request)
+    {
         $filePath           = null;
         if ($request->has('photo')) {
             /* Unlink Old Image  from helper function call*/
             !empty($user->photo) ? UnlinkImage($user->photo) : '';
             $filePath         = uploadImage('user', $request->photo);
-        }else{
+        } else {
             $filePath         = $user->getRawOriginal('photo');
         }
 
@@ -214,9 +216,9 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-    */
+     */
 
-    public function status(Request $request , $id)
+    public function status(Request $request, $id)
     {
         try {
             /**
@@ -228,10 +230,9 @@ class UserController extends Controller
 
             $status =  $data->status  == 0 ? 1 : 0;
 
-            $data->update(['status' => $status ]);
+            $data->update(['status' => $status]);
 
             return new UserResource($data);
-
         } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
@@ -243,11 +244,12 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-    */
+     */
 
-    public function changePassword(ChangePasswordRequest $request){
+    public function changePassword(ChangePasswordRequest $request)
+    {
 
-        try{
+        try {
             $id     = \Auth::guard('user-api')->id();
             $data   = User::findorFail($id);
 
@@ -257,11 +259,10 @@ class UserController extends Controller
                 ])->save();
 
                 return new UserResource($data);
-            }else{
+            } else {
                 return errorMessage(__('dashboard.not_match'), 500);
             }
-
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -271,11 +272,12 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-    */
+     */
 
-    public function changeBankInfo(BankInfoRequest $request){
+    public function changeBankInfo(BankInfoRequest $request)
+    {
 
-        try{
+        try {
             $id     = \Auth::guard('user-api')->id();
             $data   = User::selection()->findorFail($id);
 
@@ -287,22 +289,22 @@ class UserController extends Controller
             $data->save();
 
             return new UserResource($data);
-
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
 
     /**
-        * Update the specified resource in storage.
-        *
-        * @param  int  $id
-        * @return \Illuminate\Http\Response
-    */
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
-    public function changeAvatar(ChangeAvatarRequest $request){
+    public function changeAvatar(ChangeAvatarRequest $request)
+    {
 
-        try{
+        try {
             $id     = \Auth::guard('user-api')->id();
             $data   = User::selection()->findOrFail($id);
 
@@ -312,14 +314,13 @@ class UserController extends Controller
                 !empty($data->photo) ? UnlinkImage($data->photo) : '';
 
                 $filePath       = uploadImage('user', $request->photo);
-                User::where('id' , $id)->update([
+                User::where('id', $id)->update([
                     'photo'       => $filePath,
                 ]);
             }
 
             return new UserResource($data);
-
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -329,14 +330,15 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $search  = $request->search;
-        $users   = User::selection()->where('en_name','like','%'.$search.'%')
-                        ->orWhere('ar_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('mobile', 'like', "%{$search}%")
-                        ->orWhere('address', 'like', "%{$search}%")
-                        ->orderBy('id')->paginate(PAGINATION_COUNT);
+        $users   = User::selection()->where('en_name', 'like', '%' . $search . '%')
+            ->orWhere('ar_name', 'like', "%{$search}%")
+            ->orWhere('email', 'like', "%{$search}%")
+            ->orWhere('mobile', 'like', "%{$search}%")
+            ->orWhere('address', 'like', "%{$search}%")
+            ->orderBy('id')->paginate(PAGINATION_COUNT);
 
         // if($users->count() == 0)
         //     return noDataFound(__('admin.no_data'));
@@ -344,7 +346,8 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
-    public function showByToken(){
+    public function showByToken()
+    {
         $users = User::with('transactions')->findOrFail(\Auth::guard('user-api')->id());
         return response($users, 200);
     }
