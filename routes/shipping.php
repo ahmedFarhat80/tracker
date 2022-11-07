@@ -144,5 +144,7 @@ Route::group(['middleware' => ['auth:user-api', 'Localization'], 'namespace' => 
             Route::get('callback_success', 'Shipping\ForeignTransactionController@callback');
             Route::get('callback_error', 'Shipping\ForeignTransactionController@callbackError');
         });
+
+
     });
 }); // END AUTHENTICATION AS USER

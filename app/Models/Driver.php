@@ -108,7 +108,7 @@ class Driver extends Model implements AuthenticatableContract , JWTSubject
                 $q->where('user_id', $user_id);
             });
         })->paginate(PAGINATION_COUNT);
-        
+
 	    return $drivers;
     }
 }
