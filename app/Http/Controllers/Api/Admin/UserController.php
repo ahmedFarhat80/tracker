@@ -278,17 +278,17 @@ class UserController extends Controller
     {
 
         try {
-            $id     = \Auth::guard('user-api')->id();
-            $data   = User::selection()->findorFail($id);
+            // $id     = \Auth::guard('user-api')->id();
+            // $data   = User::selection()->findorFail($id);
 
-            $data->account_name = $request->account_name;
-            $data->swift_code   = $request->swift_code;
-            $data->iban         = $request->iban;
-            // $data->SubMerchUID  = $request->SubMerchUID;
+            // $data->account_name = $request->account_name;
+            // $data->swift_code   = $request->swift_code;
+            // $data->iban         = $request->iban;
+            // // $data->SubMerchUID  = $request->SubMerchUID;
 
-            $data->save();
+            // $data->save();
 
-            return new UserResource($data);
+            // return new UserResource($data);
         } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
