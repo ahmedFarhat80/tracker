@@ -69,6 +69,6 @@ Route::group(['namespace' => 'Api'], function () {
     Route::group(['prefix' => 'new'], function () {
         Route::get('/get_Resturant_data/{id}', [NewController::class, 'get_Resturant_data']);
         Route::get('/get_driver_data/{id}', [NewController::class, 'get_driver_data']);
-        Route::get('/new_get_Delivery_price', [NewController::class, 'new_get_Delivery_price'])->middleware('user-api');
+        Route::get('/new_get_Delivery_price', [NewController::class, 'new_get_Delivery_price']);
     });
 }); // END GUEST ROUTES
