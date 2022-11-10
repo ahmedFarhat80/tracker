@@ -54,7 +54,7 @@ class NewController extends Controller
 
     public function new_get_Delivery_price()
     {
-        $id = Auth::user()->id;
+        $id = Auth::id();
         $data = Setting::where('id', '=', $id)->get();
 
         return response()->json([
