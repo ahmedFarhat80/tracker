@@ -35,6 +35,7 @@ class OrderController extends Controller
     public function store(OrderRequest $request){
         try{
             $user        = \Auth::guard('user-api')->user();
+
             // check relation between user & restaurant
             if(!$user->hasRestaurant($request->restaurant_id))
                 return errorMessage("This restauant not have relation with logged shipping!", 500);

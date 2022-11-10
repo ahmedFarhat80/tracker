@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Driver;
 use App\Models\Order;
 use App\Models\Restaurant;
+use App\Models\Setting;
 use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NewController extends Controller
 {
@@ -47,6 +49,16 @@ class NewController extends Controller
             'Order_sum_price'  => $Order_sum_price,
             "distance" => $distance,
             "Orders" => $Orders
+        ]);
+    }
+
+    public function new_get_Delivery_price()
+    {
+        $id = Auth::user()->id;
+        $data = Setting::where('id', '=', $id)->get();
+
+        return response()->json([
+            'data'  => $data,
         ]);
     }
 }
