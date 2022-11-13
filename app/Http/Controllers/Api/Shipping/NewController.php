@@ -97,6 +97,7 @@ class NewController extends Controller
             $wallet->restaurant_id     = $restaurant->id;
             $wallet->budget            = $paymentCase;
             $wallet->date              = $ldate;
+            $wallet->status            = "Shipping Company";
             $wallet->save();
 
             $restaurant->wallet = $restaurant->wallet + $paymentCase;
