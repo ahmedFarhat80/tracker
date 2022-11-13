@@ -16,8 +16,9 @@ class FareController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(FareRequest $request){
-        try{
+    public function store(FareRequest $request)
+    {
+        try {
             $fare = Fare::firstOrCreate([
                 'user_id'     => \Auth::guard('user-api')->id(),
                 'base_fare'   => $request->base_fare,
@@ -27,7 +28,7 @@ class FareController extends Controller
                 'status'   => "success",
                 'data'     => $fare,
             ]);
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -41,9 +42,9 @@ class FareController extends Controller
      */
     public function update(FareRequest $request, $id)
     {
-        try{
+        try {
             $user_id         = \Auth::guard('user-api')->id();
-            $data            = Fare::where(['id' => $id , 'user_id' => $user_id])->first();
+            $data            = Fare::where(['id' => $id, 'user_id' => $user_id])->first();
             $data->base_fare = $request->base_fare;
             $data->save();
 
@@ -51,7 +52,7 @@ class FareController extends Controller
                 'status'   => "success",
                 'data'     => $data,
             ]);
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }

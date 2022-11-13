@@ -13,7 +13,7 @@ use App\Models\Wallet;
 class WalletController extends Controller
 {
     private $fatoorahServices;
-    
+
     public function __construct(FatooorahServices $fatoorahServices)
     {
         $this->fatoorahServices = $fatoorahServices;
@@ -140,14 +140,14 @@ class WalletController extends Controller
         $wallet             = Wallet::where('MerchantTxnRefNo', '=', $MerchantTxnRefNo)->first();
         $wallet->status     = $finalStatus;
         $wallet->save();
-        
+
         // update wallet for restaurant
         if($finalStatus == 'success'){
             $restaurant         = Restaurant::where('id' , $wallet->restaurant_id)->first();
             $restaurant->wallet += $wallet->budget;
             $restaurant->save();
         }
-        
+
         return Redirect()->to("https://tracking.000itkw.com/wallet?MerchantTxnRefNo=".$MerchantTxnRefNo."&success=".$gatewayMsg);
     }
 

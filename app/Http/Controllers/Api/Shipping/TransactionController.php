@@ -15,7 +15,7 @@ use App\Models\Quote;
 class TransactionController extends Controller
 {
     private $fatoorahServices;
-    
+
     public function __construct(FatooorahServices $fatoorahServices)
     {
         $this->fatoorahServices = $fatoorahServices;
@@ -162,7 +162,7 @@ class TransactionController extends Controller
 
         return Redirect()->to("https://tracking.000itkw.com/wallet?error=".$gatewayMsg);
     }
-    
+
     public function show($MerchantTxnRefNo){
         try{
             $data = Transaction::where('user_id', \Auth::guard('user-api')->id())

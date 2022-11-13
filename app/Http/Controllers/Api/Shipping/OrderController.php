@@ -85,7 +85,7 @@ class OrderController extends Controller
             if(!$user->hasRestaurant($request->restaurant_id))
                 return errorMessage("This restauant not have relation with logged shipping!", 500);
 
-            $data           = Order::findOrFail($id);
+            $data            = Order::findOrFail($id);
 
             // check status of order
             abort_if($data->status == 'approved' || $data->status == 'delivered', 403, 'You can\'t update this order.');
@@ -161,6 +161,7 @@ class OrderController extends Controller
             $order->flat_type           = $request->flat_type;
             $order->fare                = $request->fare;
             $order->totalWithFare       = $request->totalWithFare;
+
 
             $order->save();
 

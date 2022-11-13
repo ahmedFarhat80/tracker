@@ -12,7 +12,7 @@ class FatooorahServices
     private $base_url;
 
     private $headers;
-    
+
     private $request_client;
 
     /**

@@ -70,5 +70,6 @@ Route::group(['namespace' => 'Api'], function () {
         Route::get('/get_Resturant_data/{id}', [NewController::class, 'get_Resturant_data']);
         Route::get('/get_driver_data/{id}', [NewController::class, 'get_driver_data']);
         Route::get('/new_get_Delivery_price', [NewController::class, 'new_get_Delivery_price']);
+        Route::post('/add_walit/{id}', [NewController::class, 'add_walit']);
     });
 }); // END GUEST ROUTES

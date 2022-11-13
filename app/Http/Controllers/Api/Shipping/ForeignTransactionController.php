@@ -13,14 +13,16 @@ use App\Services\CodeService;
 class ForeignTransactionController extends Controller
 {
     private $fatoorahServices;
-    
+
     public function __construct(FatooorahServices $fatoorahServices)
     {
         $this->fatoorahServices = $fatoorahServices;
     }
 
     public function index(){
+
         $user_id = \Auth::guard('user-api')->id();
+
         $data = ForeignTransaction::with('user')->where('user_id' , $user_id)->paginate(PAGINATION_COUNT);
         return response()->json([
             'data'   => $data,
@@ -146,7 +148,7 @@ class ForeignTransactionController extends Controller
         $MerchantTxnRefNo   = $response['PaymentStatus']['0']['MerchantTxnRefNo'];
         $finalStatus        = $response['PaymentStatus']['0']['finalStatus'];
         $gatewayMsg         = $response['PaymentStatus']['0']['StatusDescription'];
-        
+
         ForeignTransaction::where('MerchantTxnRefNo', '=', $MerchantTxnRefNo)->update(['status' => $finalStatus]);
         return Redirect()->to("https://tracking.000itkw.com/shipping/foreign_transaction?MerchantTxnRefNo=".$MerchantTxnRefNo);
     }

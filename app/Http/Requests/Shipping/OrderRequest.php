@@ -37,11 +37,13 @@ class OrderRequest extends FormRequest
             'paid_status'       => 'required|in:cash,visa',
             'fare'              => 'required',
             'totalWithFare'     => 'required',
-            // 'street'            => 'required',
-            // 'building'          => 'required',
-            // 'floor'             => 'required',
-            // 'flat'              => 'required',
+
+            'street'            => 'sometimes',
+            'building'          => 'sometimes',
+            'floor'             => 'sometimes',
+            'flat'              => 'sometimes',
             'flat_type'         => 'in:flat,house,office',
+
             'mobile'            => [
                 'required',
                 // 'regex:/(01)[0-9]{9}/',
