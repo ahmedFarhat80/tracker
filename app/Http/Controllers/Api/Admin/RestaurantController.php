@@ -18,9 +18,10 @@ class RestaurantController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
+    public function index()
+    {
         $data = Restaurant::selection()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
-        return RestaurantResource::collection($data);  
+        return RestaurantResource::collection($data);
     }
 
     /**
@@ -41,12 +42,12 @@ class RestaurantController extends Controller
      */
     public function store(RestaurantRequest $request)
     {
-        try{
-            $restaurant = $this->process(new Restaurant , $request);
+        try {
+            $restaurant = $this->process(new Restaurant, $request);
             $restaurant->password = $request->password;
             $restaurant->save();
             return $this->show($restaurant->id);
-        } catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -59,10 +60,10 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $data = Restaurant::selection()->findOrFail($id);
             return new RestaurantResource($data);
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -87,17 +88,17 @@ class RestaurantController extends Controller
      */
     public function update(RestaurantRequest $request)
     {
-        try{
+        try {
 
-            /* Check restaurant request id is the same loged in id */  
+            /* Check restaurant request id is the same loged in id */
             // if (Gate::denies('restaurant-update-profile', $request))
             //     return errorMessage('Forbidden Error: ID does not match loged-in restaurant id!', 403);
 
             $id             = \Auth::guard('restaurant-api')->id();
             $data           = Restaurant::findorFail($id);
-            $restaurant = $this->process($data , $request);
+            $restaurant = $this->process($data, $request);
             return $this->show($restaurant->id);
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -110,18 +111,18 @@ class RestaurantController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $data = Restaurant::findOrFail($id);
-            
+
             $data->delete();
-            
+
             $data = [
                 'status'    => 'success',
                 'message'   => __('dashboard.delete_success'),
             ];
-            
+
             return response($data, 200);
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -132,21 +133,21 @@ class RestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroyAvatar(){
-        
-        try{
+    public function destroyAvatar()
+    {
+
+        try {
             $id             = \Auth::guard('user-api')->id();
             $data           = Restaurant::selection()->findorFail($id);
-            
+
             /* Unlink old image from helper function call */
             !empty($data->photo) ? UnlinkImage($data->photo) : '';
             $data->photo    = null;
 
             $data->save();
-            
-            return new RestaurantResource($data , 200);
-            
-        }catch(\Exception $ex){
+
+            return new RestaurantResource($data, 200);
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -157,18 +158,19 @@ class RestaurantController extends Controller
      * @param  User Object , Request
      * @return User
      */
-    protected function process(Restaurant $restaurant , Request $request){
+    protected function process(Restaurant $restaurant, Request $request)
+    {
         $filePath           = null;
         if ($request->has('photo')) {
             /* Unlink Old Image  from helper function call*/
             !empty($restaurant->photo) ? UnlinkImage($restaurant->photo) : '';
             $filePath         = uploadImage('restaurant', $request->photo);
-        }else{
+        } else {
             $filePath         = $restaurant->getRawOriginal('photo');
         }
 
-        $restaurant->user_id             = $request->user_id;
-        $restaurant->quote_id            = $request->quote_id;
+        // $restaurant->user_id             = $request->user_id;
+        // $restaurant->quote_id            = $request->quote_id;
         $restaurant->en_name             = $request->en_name;
         $restaurant->ar_name             = $request->ar_name;
         $restaurant->email               = $request->email;
@@ -192,24 +194,23 @@ class RestaurantController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-    */
+     */
 
-    public function status(Request $request , $id)
+    public function status(Request $request, $id)
     {
         try {
             /**
              * WILL DISCUSS
              * MUST BE CHECKED FIRST
-             * IS USER HAS BEEN SELECTED QUOTE OR NOT BEFORE CHANGE STATUS INTO ACTIVE 
-             * **/ 
+             * IS USER HAS BEEN SELECTED QUOTE OR NOT BEFORE CHANGE STATUS INTO ACTIVE
+             * **/
             $data = Restaurant::findOrFail($id);
-            
+
             $status =  $data->status  == 0 ? 1 : 0;
 
-            $data->update(['status' => $status ]);
+            $data->update(['status' => $status]);
 
-            return new RestaurantResource($data);            
-
+            return new RestaurantResource($data);
         } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
@@ -221,39 +222,40 @@ class RestaurantController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-    */
+     */
 
-    public function changePassword(ChangePasswordRequest $request){
-        
-        try{
+    public function changePassword(ChangePasswordRequest $request)
+    {
+
+        try {
             $id     = \Auth::guard('restaurant-api')->id();
             $data   = Restaurant::findorFail($id);
-            
-            if (\Hash::check($request->old_password, $data->password)) { 
+
+            if (\Hash::check($request->old_password, $data->password)) {
                 $data->fill([
                     'password' => $request->new_password
                 ])->save();
 
                 return new RestaurantResource($data);
-            }else{
+            } else {
                 return errorMessage(__('dashboard.not_match'), 500);
             }
-
-        }catch(\Exception $ex){
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
 
     /**
-        * Update the specified resource in storage.
-        *
-        * @param  int  $id
-        * @return \Illuminate\Http\Response
-    */
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
-    public function changeAvatar(ChangeAvatarRequest $request){
+    public function changeAvatar(ChangeAvatarRequest $request)
+    {
 
-        try{
+        try {
             $id     = \Auth::guard('restaurant-api')->id();
             $data   = Restaurant::selection()->findOrFail($id);
 
@@ -261,16 +263,15 @@ class RestaurantController extends Controller
 
                 /* Unlink old image from helper function call */
                 !empty($data->photo) ? UnlinkImage($data->photo) : '';
-                            
+
                 $filePath       = uploadImage('restaurant', $request->photo);
-                Restaurant::where('id' , $id)->update([
+                Restaurant::where('id', $id)->update([
                     'photo'       => $filePath,
                 ]);
             }
-            
-            return new RestaurantResource($data);
 
-        }catch(\Exception $ex){
+            return new RestaurantResource($data);
+        } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
         }
     }
@@ -280,13 +281,15 @@ class RestaurantController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $search         = $request->search;
         $restaurants    = Restaurant::filter($search);
         return RestaurantResource::collection($restaurants);
     }
 
-    public function showByToken(){
+    public function showByToken()
+    {
         $restaurant = Restaurant::findOrFail(\Auth::guard('restaurant-api')->id());
         return response($restaurant, 200);
     }

@@ -19,7 +19,7 @@ class DriverController extends Controller
     public function index(){
         $id     = \Auth::guard('restaurant-api')->id();
         $data   = Restaurant::findorFail($id)->user->drivers()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
-        return DriverResource::collection($data);    
+        return DriverResource::collection($data);
     }
 
     /**
@@ -38,7 +38,7 @@ class DriverController extends Controller
             })
             ->selection()
             ->findOrFail($id);
-            
+
             $data['all_distance']   = $data->orders->sum('distance');
             return new DriverResource($data);
         }catch(\Exception $ex){
