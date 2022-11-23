@@ -17,6 +17,9 @@ Route::group(['middleware' => ['auth:restaurant-api', 'Localization'], 'namespac
         | PROFILE Routes
         |--------------------------------------------------------------------------
         */
+
+
+
         Route::group(['prefix' => 'profile'], function () {
             Route::get('info', 'Restaurant\InfoController@info')->name('restaurant.profile.info');
             Route::get('orders-filter', 'Restaurant\InfoController@ordersFilter')->name('restaurant.profile.ordersFilter');

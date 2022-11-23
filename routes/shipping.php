@@ -19,6 +19,14 @@ Route::group(['middleware' => ['auth:user-api', 'Localization'], 'namespace' => 
         | PROFILE Routes
         |--------------------------------------------------------------------------
         */
+
+        Route::group(['prefix' => 'walit'], function () {
+            Route::get('get_cash',  'Shipping\OrderController@get_cash')->name('user.get_cash');
+            Route::post('status_change_cash',  'Shipping\OrderController@status_change_cash')->name('user.status_change_cash');
+            Route::get('sum',  'Shipping\OrderController@sum')->name('user.sum');
+        });
+
+
         Route::group(['prefix' => 'profile'], function () {
             Route::get('info', 'Shipping\InfoController@info')->name('user.profile.info');
             Route::get('orders-filter', 'Shipping\InfoController@ordersFilter')->name('user.profile.ordersFilter');

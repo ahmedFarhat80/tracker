@@ -108,4 +108,6 @@ class NewController extends Controller
             return response()->json(['message' => $validator->getMessageBag()->first(), 'Request' => Response::HTTP_BAD_REQUEST]);
         }
     }
+
+
 }

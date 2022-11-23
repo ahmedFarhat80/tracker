@@ -36,6 +36,7 @@ class Order extends Model
         'status',
         'created_at' ,
         'updated_at',
+        'paid_cash',
     ];
 
     public function scopeCurrentOrders($query){

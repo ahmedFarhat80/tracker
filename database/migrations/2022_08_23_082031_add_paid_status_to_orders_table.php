@@ -14,7 +14,8 @@ class AddPaidStatusToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->enum('paid_status',['cash' , 'visa'])->default('cash');
+            $table->enum('paid_status', ['cash', 'visa'])->default('cash');
+            $table->enum('paid_cash', ['1', '0'])->default('1');
         });
     }
 
@@ -27,6 +28,7 @@ class AddPaidStatusToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn('paid_status');
+            $table->dropColumn('paid_cash');
         });
     }
 }
