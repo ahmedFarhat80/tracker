@@ -71,6 +71,7 @@ class DriverController extends Controller
                 'ar_name',
                 'email',
                 'mobile',
+		'address',
                 // 'password',
             ]);
             

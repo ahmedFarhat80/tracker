@@ -19,7 +19,7 @@ class Driver extends Model implements AuthenticatableContract , JWTSubject
     protected $table = 'drivers';
 
     protected $fillable = [
-        'en_name', 'ar_name','email' ,'mobile', 'photo' , 'lon' , 'lat' ,'sequence', 'isOnline' ,'status' , 'password' , 'otp' ,'api_token' , 'fcm_token'  ,'created_at' , 'updated_at',
+        'en_name', 'ar_name','email' ,'mobile','address', 'photo' , 'lon' , 'lat' ,'sequence', 'isOnline' ,'status' , 'password' , 'otp' ,'api_token' , 'fcm_token'  ,'created_at' , 'updated_at',
     ];
 
     /**
