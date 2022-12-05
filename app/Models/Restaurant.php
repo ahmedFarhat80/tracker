@@ -100,7 +100,7 @@ class Restaurant extends Model implements AuthenticatableContract , JWTSubject
     }
 
     public function scopeSelection($query){
-        return $query->select('id' , 'user_id','quote_id' , app()->getLocale().'_name' . ' as name', 'en_name' , 'ar_name' , 'email' , 'mobile', 'telephone', 'photo' , 'address' , 'note' , 'lon' , 'lat' , 'wallet' ,'status');
+        return $query->select('id' , 'user_id','quote_id' , app()->getLocale().'_name' . ' as name', 'en_name' , 'ar_name' , 'email' , 'mobile', 'telephone', 'photo' , 'address' , 'note' , 'lon' , 'lat' , 'wallet' ,'status','created_at');
     }
 
     public function quote(){

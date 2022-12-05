@@ -98,7 +98,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function scopeSelection($query){
-        return $query->select('id','quote_id' , app()->getLocale().'_name' . ' as name', 'en_name' , 'ar_name' , 'email' , 'mobile', 'photo' , 'address' , 'lon' , 'lat' , 'account_name' , 'swift_code' , 'iban' , 'SubMerchUID' ,'status');
+        return $query->select('id','quote_id' , app()->getLocale().'_name' . ' as name', 'en_name' , 'ar_name' , 'email' , 'mobile', 'photo' , 'address' , 'lon' , 'lat' , 'account_name' , 'swift_code' , 'iban' , 'SubMerchUID' ,'status','created_at');
     }
 
     public function drivers(){
