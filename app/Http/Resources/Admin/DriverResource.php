@@ -16,7 +16,7 @@ class DriverResource extends JsonResource
     {
 	 $array = parent::toArray($request);
 	$array ['users']= $this->users;
-        $array ['orders']= $this-orders;
+        $array ['orders']= $this->orders;
        
         // $this->orders()->with(['driver','restaurant']);
         // $this->acceptedOrders;
