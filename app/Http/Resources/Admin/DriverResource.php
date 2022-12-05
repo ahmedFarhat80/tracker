@@ -15,7 +15,7 @@ class DriverResource extends JsonResource
     public function toArray($request)
     {
         $this->users;
-        // $this->orders;
+        $this->orders;
         // $this->acceptedOrders;
         // $this->rejectRequests;
         return parent::toArray($request);
