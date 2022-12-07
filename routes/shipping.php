@@ -148,6 +148,7 @@ Route::group(['middleware' => ['auth:user-api', 'Localization'], 'namespace' => 
         */
         Route::group(['prefix' => 'foreign_transactions'], function () {
             Route::get('/', 'Shipping\ForeignTransactionController@index');
+            Route::get('/{id}', 'Shipping\ForeignTransactionController@show');
             Route::post('pay', 'Shipping\ForeignTransactionController@pay');
             Route::get('callback_success', 'Shipping\ForeignTransactionController@callback');
             Route::get('callback_error', 'Shipping\ForeignTransactionController@callbackError');

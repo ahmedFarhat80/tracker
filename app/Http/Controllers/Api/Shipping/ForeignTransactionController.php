@@ -29,6 +29,92 @@ class ForeignTransactionController extends Controller
         ]);
     }
 
+    public function show($id){
+        try{
+            $ForeignTransaction= ForeignTransaction::with('user')->where('user_id', \Auth::guard('user-api')->id())
+                ->find($id);
+            $rand               = $ForeignTransaction->MerchantTxnRefNo;
+            $shipping           = \Auth::guard('user-api')->user();
+
+            $companyname        = $ForeignTransaction->name;
+            $phonenumber        = $ForeignTransaction->mobile;
+            $email              = $ForeignTransaction->email;
+            $paymentCase        = $ForeignTransaction->amount;
+            $setSecretKey       = getPaymentInfo()->secretKey;
+            $MerchUID           = getPaymentInfo()->MerchUID;
+            $SubMerchUID        = !empty($shipping->SubMerchUID) ? $shipping->SubMerchUID : getPaymentInfo()->SubMerchUID;
+            $merchantIBanNo     = !empty($shipping->iban) ? $shipping->iban : getPaymentInfo()->iban;
+            $accountTitleName   = !empty($shipping->account_name) ? $shipping->account_name : getPaymentInfo()->account_name;
+            $swiftCode          = !empty($shipping->swift_code) ? $shipping->swift_code : getPaymentInfo()->swift_code;
+            $success_url        = "https://tracking.000itkw.com/users/foreign_transactions/callback_success";
+            $error_url          = "https://tracking.000itkw.com/users/foreign_transactions/callback_error";
+            $data = [
+                "DBRqst" => "PY_ECom",
+                "Do_Appinfo" => [
+                    "APIVer" => "1.6",
+                    "APPTyp" => "WEB",
+                    "AppVer" => "1"
+                ],
+                "Do_MerchDtl" => [
+                    "BKY_PRDENUM"       => "ECom",
+                    "FURL"              => $error_url,//env('error_url'),
+                    "MerchUID"          => "$MerchUID",
+                    "SURL"              => $success_url,//env('success_url'),
+                    'setSecretKey'      => "$setSecretKey",
+                ],
+                "Do_PyrDtl" => [
+                    "Pyr_MPhone"        => $ForeignTransaction->mobile,
+                    "Pyr_Name"          => $ForeignTransaction->name,
+                    "ISDNCD"            => "965"
+                ],
+                "Do_TxnDtl" => [
+                    [
+                        "SubMerchUID"   => "$SubMerchUID",
+                        "Txn_AMT"       => "$paymentCase"
+                    ]
+                ],
+                "Do_TxnHdr" => [
+                    'Merch_Txn_UID'     => "$rand",
+                    "PayFor"            => "ECom",
+                    "PayMethod"         => "knet",
+                    "Txn_HDR"           => "2987228884280325",
+                    "hashMac" => "8B95BEED1BDAAA0B0672D28BFA7F0C08408EFD7AAACA6C78582242A1348ABAB0542C0CD43BC9AD9DD906B001C1B220557011D8E0770DDFB45CE70C8D7D069C7F",
+                    "emailAddress"      => "$email",
+                    "phoneAddress"      => "+965" . "$phonenumber",
+                    "address"           => "Kwite",
+                    "ISDNCode"          => "123",
+                    "merchantIBanNo"    => $merchantIBanNo,
+                    "accountTitleName"  => $accountTitleName,
+                    "swiftCode"         => $swiftCode,
+                    "merchantName"      => "$companyname",
+                ]
+            ];
+
+            session()->regenerate();
+            session(['MIR' => "$MerchUID"]);
+
+            $response = $this->fatoorahServices->sendPayment($data);
+            if ($response['PayUrl'] != null) {
+
+                $message = "Payemnt link from ". $ForeignTransaction->en_name ."/n". $response['PayUrl'];
+                CodeService::send($ForeignTransaction->mobile , $message);
+                return response()->json([
+                    'status'   => "success",
+                    'message'     => $response['PayUrl'],
+                ]);
+
+            } else {
+                return response()->json([
+                    'status'   => "error",
+                    'message'     => $response['ErrorMessage'],
+                ]);
+            }
+
+        }catch(\Exception $ex){
+            return errorMessage($ex->getMessage(), 500);
+        }
+    }
+
     public function pay(ForeignTransactionRequest $request)
     {
         $rand               = rand(100000000000, 999999999999);
