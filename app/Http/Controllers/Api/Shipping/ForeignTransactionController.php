@@ -33,7 +33,7 @@ class ForeignTransactionController extends Controller
         try{
             $ForeignTransaction= ForeignTransaction::with('user')->where('user_id', \Auth::guard('user-api')->id())
                 ->find($id);
-            $rand               = $ForeignTransaction->MerchantTxnRefNo;
+            $rand               =  rand(100000000000, 999999999999);
             $shipping           = \Auth::guard('user-api')->user();
 
             $companyname        = $ForeignTransaction->name;
@@ -95,6 +95,10 @@ class ForeignTransactionController extends Controller
 
             $response = $this->fatoorahServices->sendPayment($data);
             if ($response['PayUrl'] != null) {
+                $MerchantTxnRefNo = "$rand";
+                $ForeignTransaction->MerchantTxnRefNo=$rand;
+                $ForeignTransaction->save();
+
 
                 $message = "Payemnt link from ". $ForeignTransaction->en_name ."/n". $response['PayUrl'];
                 CodeService::send($ForeignTransaction->mobile , $message);
