@@ -107,6 +107,7 @@ class ForeignTransactionController extends Controller
             $foreignTransaction->name              = $request->name;
             $foreignTransaction->email             = $request->email;
             $foreignTransaction->mobile            = $request->mobile;
+            $foreignTransaction->details            = $request->details;
             $foreignTransaction->date              = $ldate;
 
             $issave = $foreignTransaction->save();

@@ -28,6 +28,7 @@ class ForeignTransactionRequest extends FormRequest
             'email'     => 'required|email',
             'mobile'    => 'required|digits:8|numeric',
             'amount'    => 'required|numeric',
+            'details'    => 'required|string',
         ];
     }
 }

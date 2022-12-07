@@ -9,12 +9,12 @@ class ForeignTransaction extends Model
 {
     use HasFactory;
 
-    protected $primarykey = 'id'; 
+    protected $primarykey = 'id';
 
 	protected $table = 'foreign_transactions';
 
     protected $fillable = [
-        'user_id','MerchantTxnRefNo','amount' ,'name','email' , 'mobile' ,'date' , 'status','created_at' , 'updated_at',
+        'user_id','MerchantTxnRefNo','amount' ,'name','email' , 'mobile','details' ,'date' , 'status','created_at' , 'updated_at',
     ];
 
     public function user(){
