@@ -18,7 +18,7 @@ class DriverController extends Controller
 {
     private $driverRepository;
 
-    public function __construct(DriverRepositoryInterface $driverRepository) 
+    public function __construct(DriverRepositoryInterface $driverRepository)
     {
         $this->driverRepository = $driverRepository;
     }
@@ -28,7 +28,7 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() 
+    public function index()
     {
         if(\Auth::guard('admin-api')->check()){
             $data   = $this->driverRepository->getAllDrivers();
@@ -58,7 +58,7 @@ class DriverController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(DriverRequest $request) 
+    public function store(DriverRequest $request)
     {
         try{
             $filePath = null;
@@ -71,14 +71,16 @@ class DriverController extends Controller
                 'ar_name',
                 'email',
                 'mobile',
-		'address',
+		        'address',
+		        'lat',
+		        'lon',
                 // 'password',
             ]);
-            
+
             $driverDetails['photo']     = $filePath;
             $driverDetails['status']    = $request->status ? 1 : 0;
             $driverDetails['api_token'] = \Str::random(60);
-            
+
             $driver = $this->driverRepository->createDriver($driverDetails);
 
             if(\Auth::guard('admin-api')->check()){
@@ -88,13 +90,13 @@ class DriverController extends Controller
             }
 
             $driver->users()->attach($user);
-            
+
             return $this->show($driver->id);
         } catch(\Exception $ex){
             return errorMessage($ex->getMessage(), 500);
         }
 
-        
+
     }
 
     /**
@@ -105,9 +107,9 @@ class DriverController extends Controller
      */
     public function show($id)
     {
-        /* IN-Case logged-in user */  
+        /* IN-Case logged-in user */
         if(\Auth::guard('user-api')->check()){
-            /* Check driver specify logged-in user */  
+            /* Check driver specify logged-in user */
             if (Gate::denies('user-driver-check', $id))
             return errorMessage('Forbidden Error: This driver does not represent the logged-in user', 403);
         }
@@ -134,12 +136,12 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DriverRequest $request , $id) 
+    public function update(DriverRequest $request , $id)
     {
         try{
-            /* IN-Case logged-in user */  
+            /* IN-Case logged-in user */
             if(\Auth::guard('user-api')->check()){
-                /* Check driver specify logged-in user */  
+                /* Check driver specify logged-in user */
                 if (Gate::denies('user-driver-check', $id))
                 return errorMessage('Forbidden Error: This driver does not represent the logged-in user', 403);
             }
@@ -149,22 +151,22 @@ class DriverController extends Controller
             if ($request->hasFile('photo')) {
                 /* Unlink old image from helper function call */
                 !empty($data->photo) ? UnlinkImage($data->photo) : '';
-                            
+
                 $filePath       = uploadImage('driver', $request->photo);
             }else{
                 $filePath       = $data->getRawOriginal('photo');
             }
-    
+
             $driverDetails = $request->only([
                 'en_name',
                 'ar_name',
                 'email',
                 'mobile',
             ]);
-            
+
             $driverDetails['photo']     = $filePath;
             $driverDetails['status']    = $request->status ? 1 : 0;
-            
+
             $driver = $this->driverRepository->updateDriver($id, $driverDetails);
 
             if(\Auth::guard('admin-api')->check()){
@@ -191,9 +193,9 @@ class DriverController extends Controller
     {
         try{
 
-            /* IN-Case logged-in user */  
+            /* IN-Case logged-in user */
             if(\Auth::guard('user-api')->check()){
-                /* Check driver specify logged-in user */  
+                /* Check driver specify logged-in user */
                 if (Gate::denies('user-driver-check', $id))
                 return errorMessage('Forbidden Error: This driver does not represent the logged-in user', 403);
             }
@@ -204,7 +206,7 @@ class DriverController extends Controller
                 'status'    => 'success',
                 'message'   => __('driver.delete_success'),
             ];
-            
+
             return response($data, 200);
             // return response()->json(null, Response::HTTP_NO_CONTENT);
 
@@ -218,7 +220,7 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getActiveDrivers() 
+    public function getActiveDrivers()
     {
         if(\Auth::guard('admin-api')->check()){
             $data   = $this->driverRepository->getActiveDrivers();
@@ -240,20 +242,20 @@ class DriverController extends Controller
     public function status(Request $request , $id)
     {
         try {
-            /* IN-Case logged-in user */  
+            /* IN-Case logged-in user */
             if(\Auth::guard('user-api')->check()){
-                /* Check driver specify logged-in user */  
+                /* Check driver specify logged-in user */
                 if (Gate::denies('user-driver-check', $id))
                 return errorMessage('Forbidden Error: This driver does not represent the logged-in user', 403);
             }
 
             $data = Driver::findOrFail($id);
-            
+
             $status =  $data->status  == 0 ? 1 : 0;
 
             $data->update(['status' => $status ]);
 
-            return new DriverResource($data);            
+            return new DriverResource($data);
 
         } catch (\Exception $ex) {
             return errorMessage($ex->getMessage(), 500);
