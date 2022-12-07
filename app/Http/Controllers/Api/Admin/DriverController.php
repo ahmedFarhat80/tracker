@@ -162,6 +162,9 @@ class DriverController extends Controller
                 'ar_name',
                 'email',
                 'mobile',
+                'address',
+                'lat',
+                'lon',
             ]);
 
             $driverDetails['photo']     = $filePath;
