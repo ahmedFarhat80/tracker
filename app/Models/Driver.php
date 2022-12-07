@@ -67,7 +67,7 @@ class Driver extends Model implements AuthenticatableContract , JWTSubject
     }
 
     public function scopeSelection($query){
-        return $query->select('id' , app()->getLocale().'_name' . ' as name' , 'en_name' , 'ar_name' , 'email' , 'mobile' , 'lon' , 'lat' ,'photo' , 'status' , 'isOnline','address','created_at');
+        return $query->select("id"  , app()->getLocale().'_name' . ' as name' , 'en_name' , 'ar_name' , 'email' , 'mobile' , 'lon' , 'lat' ,'photo' , 'status' , 'isOnline','address','created_at');
     }
 
     public function users(){

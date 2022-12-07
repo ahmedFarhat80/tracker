@@ -20,7 +20,7 @@ class NewController extends Controller
     {
         # code...
 
-        $data         = Restaurant::where('id', '=', $id)->with(['orders','orders.driver'])->first();
+        $data         = Restaurant::where('id', '=', $id)->with(['orders.driver'])->first();
         $count_orders = $data->orders->count();
         $Wallet       = Wallet::where('restaurant_id', '=', $id)->get();
         $Balance      = Wallet::where('restaurant_id', '=', $id)->count();
