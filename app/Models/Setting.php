@@ -9,7 +9,7 @@ class Setting extends Model
 {
     use HasFactory;
 
-    protected $primarykey = 'id'; 
+    protected $primarykey = 'id';
 
 	protected $table = 'settings';
 
@@ -23,7 +23,10 @@ class Setting extends Model
         'radius',
         'time_from',
         'time_to',
-        'distance_type' // Km,Mi,Me
+        'distance_type', // Km,Mi,Me
+        'amount_start_delivery',
+        'maximum_distance' ,
+        'start_number_km' ,
     ];
 
     public function user(){

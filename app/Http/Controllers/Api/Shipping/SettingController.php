@@ -141,6 +141,9 @@ class SettingController extends Controller
             'time_to'            => date('h:i:s', strtotime($request->time_to)),
             'radius'             => $request->radius,
             'distance_type'      => $request->distance_type,
+            'amount_start_delivery'      => $request->amount_start_delivery,
+            'start_number_km'      => $request->start_number_km,
+            'maximum_distance'      => $request->maximum_distance,
         ]);
 
         return $setting;

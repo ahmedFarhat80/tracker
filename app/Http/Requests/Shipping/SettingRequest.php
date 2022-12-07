@@ -29,6 +29,9 @@ class SettingRequest extends FormRequest
             'time_from'         => 'required|date_format:H:i',
             'time_to'           => 'required|date_format:H:i|after:time_from',
             'distance_type'     => 'required|in:km,miles,meter',
+            'amount_start_delivery'     => 'required|numeric',
+            'maximum_distance'     => 'required|numeric',
+            'start_number_km'     => 'required|numeric',
         ];
     }
 }
