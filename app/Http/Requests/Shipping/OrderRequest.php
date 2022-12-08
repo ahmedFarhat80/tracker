@@ -24,7 +24,7 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'restaurant_id'     => 'required_if:receipt_type,restaurant|exists:restaurants,id',
+            'restaurant_id'     => 'required_if:receipt_type,restaurant|nullable|exists:restaurants,id',
             'order_no'          => 'required|unique:orders,order_no,'.$this->id,
             'client_name'       => 'required|string|max:255',
             'origin_address'           => 'required',
