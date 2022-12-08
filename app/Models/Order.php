@@ -37,6 +37,10 @@ class Order extends Model
         'created_at' ,
         'updated_at',
         'paid_cash',
+        'origin_lat',
+        'origin_lng',
+        'origin_address',
+        'receipt_type',
     ];
 
     public function scopeCurrentOrders($query){

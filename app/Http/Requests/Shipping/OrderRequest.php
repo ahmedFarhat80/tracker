@@ -24,17 +24,20 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'restaurant_id'     => 'required|exists:restaurants,id',
+            'restaurant_id'     => 'required_if:receipt_type,restaurant|exists:restaurants,id',
             'order_no'          => 'required|unique:orders,order_no,'.$this->id,
             'client_name'       => 'required|string|max:255',
-            'address'           => 'required',
-            'lon'               => 'required|numeric',
-            'lat'               => 'required|numeric',
+            'origin_address'           => 'required',
+            'origin_lat'               => 'required|numeric',
+            'origin_lng'               => 'required|numeric',
+            'destination_address'           => 'required',
+            'destination_lat'               => 'required|numeric',
+            'destination_lng'               => 'required|numeric',
             'details'           => 'required',
             'price'             => 'required',
             'duration'          => 'required',
             'distance'          => 'required',
-            'paid_status'       => 'required|in:cash,visa',
+            'paid_status'       => 'required|in:cash,visa,link',
             'fare'              => 'required',
             'totalWithFare'     => 'required',
 
@@ -43,6 +46,7 @@ class OrderRequest extends FormRequest
             'floor'             => 'sometimes',
             'flat'              => 'sometimes',
             'flat_type'         => 'in:flat,house,office',
+            'receipt_type'         => 'in:visitor,restaurant',
 
             'mobile'            => [
                 'required',

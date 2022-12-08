@@ -24,34 +24,37 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $data   = User::find(\Auth::guard('user-api')->id())->restaurants()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
+        $data = User::find(\Auth::guard('user-api')->id())->restaurants()->orderBy('id', 'DESC')->paginate(PAGINATION_COUNT);
         return response($data, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(OrderRequest $request)
     {
         try {
-            $user        = \Auth::guard('user-api')->user();
+            $user = \Auth::guard('user-api')->user();
 
             // check relation between user & restaurant
-            if (!$user->hasRestaurant($request->restaurant_id))
-                return errorMessage("This restauant not have relation with logged shipping!", 500);
+
+            if ($request->receipt_type == "restaurant") {
+                if (!$user->hasRestaurant($request->restaurant_id))
+                    return errorMessage("This restauant not have relation with logged shipping!", 500);
+            }
 
             $order = $this->process(new Order, $request);
 
-            $longitude      = $order->restaurant->lon; //31.377033;
-            $latitude       = $order->restaurant->lat; //30.016893;
-            $radius         = 3; // far KM "6371"
+            $origin_lat = $request->origin_lat; //31.377033;
+            $origin_lng = $request->origin_lng; //30.016893;
+            $radius = 3; // far KM "6371"
 
             $order->nearestdrivers = FindNearestDriverService::fetch(
-                $longitude,
-                $latitude,
+                $origin_lng,
+                $origin_lat,
                 $radius,
                 $user->id
             )->get();
@@ -63,7 +66,7 @@ class OrderController extends Controller
              * insert driver notification in DB
              * push for driver channel via pusher
              */
-            foreach ($order->nearestdrivers  as $driver) {
+            foreach ($order->nearestdrivers as $driver) {
                 $driver->notify(new DriverNotification($driver));
                 event(new NotifyOrderDrivers($driver->id, $order->id));
             }
@@ -80,27 +83,27 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(OrderRequest $request, $id)
     {
         try {
-            $user  = \Auth::guard('user-api')->user();
+            $user = \Auth::guard('user-api')->user();
             // check relation between user & restaurant
             if (!$user->hasRestaurant($request->restaurant_id))
                 return errorMessage("This restauant not have relation with logged shipping!", 500);
 
-            $data            = Order::findOrFail($id);
+            $data = Order::findOrFail($id);
 
             // check status of order
             abort_if($data->status == 'approved' || $data->status == 'delivered', 403, 'You can\'t update this order.');
 
-            $order          = $this->process($data, $request);
-            $longitude      = $order->restaurant->lon; //31.377033;
-            $latitude       = $order->restaurant->lat; //30.016893;
-            $radius         = 3; // far KM "6371"
+            $order = $this->process($data, $request);
+            $longitude = $order->restaurant->lon; //31.377033;
+            $latitude = $order->restaurant->lat; //30.016893;
+            $radius = 3; // far KM "6371"
 
             $order->nearestdrivers = FindNearestDriverService::fetch(
                 $longitude,
@@ -114,7 +117,7 @@ class OrderController extends Controller
             /**
              * push for driver channel via pusher
              */
-            foreach ($order->nearestdrivers  as $driver) {
+            foreach ($order->nearestdrivers as $driver) {
                 event(new NotifyOrderDrivers($driver->id, $order->id));
             }
 
@@ -130,7 +133,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -146,32 +149,41 @@ class OrderController extends Controller
     /**
      * store / update patients fields
      *
-     * @param  order Object , Request
+     * @param order Object , Request
      * @return order
      */
     protected function process(Order $order, Request $request)
     {
         try {
-            $order->restaurant_id       = $request->restaurant_id;
-            $order->client_name         = $request->client_name;
-            $order->order_no            = $request->order_no;
-            $order->details             = $request->details;
-            $order->address             = $request->address;
-            $order->lon                 = $request->lon;
-            $order->lat                 = $request->lat;
-            $order->mobile              = $request->mobile;
-            $order->price               = $request->price;
-            $order->duration            = $request->duration;
-            $order->distance            = $request->distance;
-            $order->paid_status         = $request->paid_status;
+            $order->restaurant_id = $request->restaurant_id;
+            $order->client_name = $request->client_name;
+            $order->order_no = $request->order_no;
+            $order->details = $request->details;
 
-            $order->flat                = $request->flat;
-            $order->building            = $request->building;
-            $order->floor               = $request->floor;
-            $order->street              = $request->street;
-            $order->flat_type           = $request->flat_type;
-            $order->fare                = $request->fare;
-            $order->totalWithFare       = $request->totalWithFare;
+            $order->address = $request->destination_address;
+            $order->origin_address = $request->origin_address;
+
+            $order->lon = $request->destination_lng;
+            $order->lat = $request->destination_lat;
+
+            $order->origin_lat = $request->origin_lat;
+            $order->origin_lng = $request->origin_lng;
+
+            $order->receipt_type = $request->receipt_type;
+
+            $order->mobile = $request->mobile;
+            $order->price = $request->price;
+            $order->duration = $request->duration;
+            $order->distance = $request->distance;
+            $order->paid_status = $request->paid_status;
+
+            $order->flat = $request->flat;
+            $order->building = $request->building;
+            $order->floor = $request->floor;
+            $order->street = $request->street;
+            $order->flat_type = $request->flat_type;
+            $order->fare = $request->fare;
+            $order->totalWithFare = $request->totalWithFare;
 
 
             $order->save();
@@ -185,7 +197,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -196,8 +208,8 @@ class OrderController extends Controller
             $data->delete();
 
             $data = [
-                'status'    => 'success',
-                'message'   => __('dashboard.delete_success'),
+                'status' => 'success',
+                'message' => __('dashboard.delete_success'),
             ];
 
             return response($data, 200);
@@ -222,7 +234,7 @@ class OrderController extends Controller
                 $is = $driver->driver_id;
                 foreach ($orders as $order) {
                     if ($order->driver_id == $is && $order->paid_cash == 0 && $order->paid_status == "cash") {
-                        $sum =  $sum + $order->fare;
+                        $sum = $sum + $order->fare;
                     }
                 }
             }
@@ -257,12 +269,11 @@ class OrderController extends Controller
         }
 
         $data = [
-            'status'    => 'success',
-            'message'   => __('validation.success'),
+            'status' => 'success',
+            'message' => __('validation.success'),
         ];
         return response(['data' => $data], 200);
     }
-
 
 
     public function sum()
@@ -280,7 +291,7 @@ class OrderController extends Controller
                 $is = $driver->driver_id;
                 foreach ($orders as $order) {
                     if ($order->driver_id == $is) {
-                        $sum =  $sum + $order->fare;
+                        $sum = $sum + $order->fare;
                     }
                 }
             }
