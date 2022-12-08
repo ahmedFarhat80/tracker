@@ -14,7 +14,8 @@ class AddExtraToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->enum('paid_status', ['cash', 'visa','link'])->default('cash')->change();
+            \DB::statement("ALTER TABLE `orders` CHANGE `paid_status` `paid_status` ENUM('cash','visa','link') NOT NULL DEFAULT 'cash';");
+
             $table->bigInteger('restaurant_id')->unsigned()->nullable()->change();
             $table->string('origin_lat')->nullable();
             $table->string('origin_lng')->nullable();
