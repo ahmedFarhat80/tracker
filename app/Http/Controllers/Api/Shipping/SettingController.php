@@ -135,8 +135,8 @@ class SettingController extends Controller
      * @return Setting
      */
     protected function process(Setting $setting , Request $request){
-        $id=$setting->id??'';
-        $setting = Setting::firstOrCreate([$id],[
+
+        $setting = Setting::updateOrCreate(['user_id' => \Auth::guard('user-api')->id()],[
             'user_id'            => \Auth::guard('user-api')->id(),
             'time_from'          => date('h:i:s', strtotime($request->time_from)),
             'time_to'            => date('h:i:s', strtotime($request->time_to)),
