@@ -26,6 +26,7 @@ class OrderRequest extends FormRequest
         return [
             'restaurant_id'     => 'required_if:receipt_type,restaurant|nullable|exists:restaurants,id',
             'order_no'          => 'required|unique:orders,order_no,'.$this->id,
+            'from_client_name'       => 'required|string|max:255',
             'client_name'       => 'required|string|max:255',
             'origin_address'           => 'required',
             'origin_lat'               => 'required|numeric',
@@ -33,10 +34,11 @@ class OrderRequest extends FormRequest
             'destination_address'           => 'required',
             'destination_lat'               => 'required|numeric',
             'destination_lng'               => 'required|numeric',
+            'from_details'           => 'required',
             'details'           => 'required',
             'price'             => 'required',
-            'duration'          => 'required',
-            'distance'          => 'required',
+            'duration'          => 'required|numeric',
+            'distance'          => 'required|numeric',
             'paid_status'       => 'required|in:cash,visa,link',
             'fare'              => 'required',
             'totalWithFare'     => 'required',
@@ -45,10 +47,15 @@ class OrderRequest extends FormRequest
             'building'          => 'sometimes',
             'floor'             => 'sometimes',
             'flat'              => 'sometimes',
+            'from_flat_type'         => 'in:flat,house,office',
             'flat_type'         => 'in:flat,house,office',
             'receipt_type'         => 'in:visitor,restaurant',
 
-            'mobile'            => [
+            'from_mobile'            => [
+                'required',
+                // 'regex:/(01)[0-9]{9}/',
+                // 'size:11'
+            ],'mobile'            => [
                 'required',
                 // 'regex:/(01)[0-9]{9}/',
                 // 'size:11'

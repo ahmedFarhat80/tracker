@@ -41,6 +41,19 @@ class Order extends Model
         'origin_lng',
         'origin_address',
         'receipt_type',
+        'from_client_name',
+        'from_mobile',
+        'from_flat',
+        'from_building',
+        'from_floor',
+        'from_street',
+        'from_flat_type',
+        'from_piece',
+        'piece',
+        'from_avenue',
+        'avenue',
+        'from_details',
+        'payment_shipping_status',
     ];
 
     public function scopeCurrentOrders($query){

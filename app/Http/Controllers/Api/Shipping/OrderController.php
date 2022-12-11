@@ -48,6 +48,15 @@ class OrderController extends Controller
 
             $order = $this->process(new Order, $request);
 
+            if ($order->paid_status == "cash") {
+                $order->payment_shipping_status = true;
+                $order->save();
+            } elseif ($order->paid_status == "visa") {
+                // withdraw from wallet restaurant
+                $order->payment_shipping_status = true;
+                $order->save();
+            } //wallet
+
             $origin_lat = $request->origin_lat; //31.377033;
             $origin_lng = $request->origin_lng; //30.016893;
             $radius = 3; // far KM "6371"
@@ -156,8 +165,10 @@ class OrderController extends Controller
     {
         try {
             $order->restaurant_id = $request->restaurant_id;
+            $order->from_client_name = $request->from_client_name;
             $order->client_name = $request->client_name;
             $order->order_no = $request->order_no;
+            $order->from_details = $request->from_details;
             $order->details = $request->details;
 
             $order->address = $request->destination_address;
@@ -171,19 +182,31 @@ class OrderController extends Controller
 
             $order->receipt_type = $request->receipt_type;
 
+            $order->from_mobile = $request->from_mobile;
             $order->mobile = $request->mobile;
             $order->price = $request->price;
             $order->duration = $request->duration;
             $order->distance = $request->distance;
             $order->paid_status = $request->paid_status;
 
+            $order->from_flat = $request->from_flat;
             $order->flat = $request->flat;
+            $order->from_building = $request->from_building;
             $order->building = $request->building;
+            $order->from_floor = $request->from_floor;
             $order->floor = $request->floor;
+            $order->from_street = $request->from_street;
             $order->street = $request->street;
+            $order->from_flat_type = $request->from_flat_type;
             $order->flat_type = $request->flat_type;
             $order->fare = $request->fare;
             $order->totalWithFare = $request->totalWithFare;
+
+            $order->from_piece = $request->from_piece;
+            $order->piece = $request->piece;
+
+            $order->from_avenue = $request->from_avenue;
+            $order->avenue = $request->avenue;
 
 
             $order->save();
